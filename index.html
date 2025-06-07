@@ -49,10 +49,9 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    
-    const token1 ='github_pat_'
-    const token2 ='11BOTV7QI0g4XTJz0tWpXB_4KAObpiuJrGRsPY8NYmuUQjF0803YYZ7N9qcetLs6FY4UBGNZEZD69OGxL9'
-    const GITHUB_TOKEN = token1+token2; 
+    const token1 = 'github_pat_';
+    const token2 = '11BOTV7QI0g4XTJz0tWpXB_4KAObpiuJrGRsPY8NYmuUQjF0803YYZ7N9qcetLs6FY4UBGNZEZD69OGxL9';
+    const GITHUB_TOKEN = token1 + token2;
 
     const Radiator = () => {
       const [data, setData] = useState({
@@ -70,6 +69,21 @@
 
       const repo = 'slu-csci-5030/dads';
       const cacheExpiry = 10 * 60 * 1000; // 10 minutes
+
+      // Simulated team metrics data (replace with actual data source if available)
+      const [teamMetrics, setTeamMetrics] = useState({
+        meetingAttendance: 95, // Percentage of required meetings attended
+        responseTime: 45, // Average response time in minutes
+        documentationQuality: 90, // Percentage based on reviews
+        sprintPlanningAdherence: 92 // Percentage of tasks planned accurately
+      });
+
+      // Simulated product metrics data (replace with actual data source if available)
+      const [productMetrics, setProductMetrics] = useState({
+        bugCount: 3, // Number of bugs post-deployment
+        feedbackScore: 85, // Average feedback score from peers (out of 100)
+        taskCompletionRate: 88 // Percentage of tasks completed on time
+      });
 
       // Optimized GraphQL query
       const GRAPHQL_QUERY = `
@@ -409,6 +423,8 @@
           .call(d3.axisBottom(x).ticks(7).tickSize(-140).tickFormat(''))
           .selectAll('line')
           .style('stroke', '#e5e7eb')
+
+
           .style('stroke-opacity', 0.5);
 
         svg.append('g')
@@ -450,9 +466,7 @@
           .attr('id', 'gradient')
           .attr('gradientUnits', 'userSpaceOnUse')
           .attr('x1', 0).attr('y1', 10)
-         
-
- .attr('x2', 0).attr('y2', 150);
+          .attr('x2', 0).attr('y2', 150);
 
         gradient.append('stop')
           .attr('offset', '0%')
@@ -521,11 +535,11 @@
         return `${diffInWeeks} weeks ago`;
       };
 
-      const getIssuesByLabel = (label) => {
-        return data.issues.filter(issue => 
-          issue.labels && issue.labels.some(l => l.name.toLowerCase().includes(label.toLowerCase()))
-        ).length;
-      };
+ const getIssuesByLabel = (label) => {
+  return data.issues.filter(issue => 
+    issue.labels && issue.labels.some(l => l.name.toLowerCase().includes(label.toLowerCase()))
+  ).length;
+};
 
       if (loading && data.issues.length === 0 && !error) {
         return (
@@ -540,8 +554,8 @@
       }
 
       const cards = [
-            {
-            title: "Team Members",
+        {
+         title: "Team Members",
             content: (
             <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -600,11 +614,11 @@
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-blue-600">{data.repoInfo.stargazers_count || 0}</div>
+                  <div className="text-2xl font-bold text-blue-600">{data.repoInfo.stargazerCount || 0}</div>
                   <div className="text-sm text-gray-600">Stars</div>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-600">{data.repoInfo.forks_count || 0}</div>
+                  <div className="text-2xl font-bold text-green-600">{data.repoInfo.forkCount || 0}</div>
                   <div className="text-sm text-gray-600">Forks</div>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg text-center">
@@ -708,74 +722,131 @@
             </div>
           )
         },
-        
         {
-            title: "Project Progress",
-            content: (
-                <div className="w-full">
-                <div className="text-sm text-gray-600 mb-1">Overall Progress</div>
-                <div className="w-full bg-gray-200 rounded-full h-4">
-                    <div
-                    className="bg-green-500 h-4 rounded-full"
-                    style={{
-                        width: `${
-                        data.issues.length > 0
-                            ? Math.round(
-                                (data.issues.filter((i) => i.state === "closed").length /
-                                data.issues.length) *
-                                100
-                            )
-                            : 0
-                        }%`,
-                    }}
-                    ></div>
-                </div>
-                <div className="text-right text-xs text-gray-500 mt-1">
-                    {data.issues.length > 0
-                    ? Math.round(
-                        (data.issues.filter((i) => i.state === "closed").length /
-                            data.issues.length) *
+          title: "Project Progress",
+          content: (
+            <div className="w-full">
+              <div className="text-sm text-gray-600 mb-1">Overall Progress</div>
+              <div className="w-full bg-gray-200 rounded-full h-4">
+                <div
+                  className="bg-green-500 h-4 rounded-full"
+                  style={{
+                    width: `${
+                      data.issues.length > 0
+                        ? Math.round(
+                            (data.issues.filter((i) => i.state === 'closed').length /
+                              data.issues.length) *
                             100
-                        )
-                    : 0}
-                    % complete
-                </div>
-                </div>
-            ),
+                          )
+                        : 0
+                    }%`,
+                  }}
+                ></div>
+              </div>
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {data.issues.length > 0
+                  ? Math.round(
+                      (data.issues.filter((i) => i.state === 'closed').length /
+                        data.issues.length) *
+                        100
+                    )
+                  : 0}
+                % complete
+              </div>
+            </div>
+          ),
         },
-
         {
-            title: "Team Health",
-            content: (
-                <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-2">
-                    <span className="h-3 w-3 rounded-full bg-green-400"></span>
-                    <span className="text-sm text-gray-700">Healthy</span>
-                </div>
-                </div>
-            )
+        title: "Team Health",
+        content: (
+            <div className="flex flex-col space-y-2">
+            <div className="flex items-center space-x-2">
+                <span className={`h-3 w-3 rounded-full ${
+                teamMetrics.meetingAttendance >= 90 && teamMetrics.responseTime <= 60 && teamMetrics.documentationQuality >= 85
+                    ? 'bg-green-400'
+                    : teamMetrics.meetingAttendance >= 70 && teamMetrics.responseTime <= 120 && teamMetrics.documentationQuality >= 70
+                    ? 'bg-yellow-400'
+                    : 'bg-red-400'
+                }`}></span>
+                <span className="text-sm text-gray-700">
+                {teamMetrics.meetingAttendance >= 90 && teamMetrics.responseTime <= 60 && teamMetrics.documentationQuality >= 85
+                    ? 'Good'
+                    : teamMetrics.meetingAttendance >= 70 && teamMetrics.responseTime <= 120 && teamMetrics.documentationQuality >= 70
+                    ? 'Stable'
+                    : 'Needs Attention'}
+                </span>
+            </div>
+            <div className="text-sm text-gray-600">
+                {teamMetrics.meetingAttendance >= 90 && teamMetrics.responseTime <= 60 && teamMetrics.documentationQuality >= 85
+                ? 'Excellent collaboration! High meeting attendance, prompt responses, and strong documentation.'
+                : teamMetrics.meetingAttendance >= 70 && teamMetrics.responseTime <= 120 && teamMetrics.documentationQuality >= 70
+                ? 'Good progress with consistent collaboration, but room for improvement in responsiveness or documentation.'
+                : 'Team needs attention: improve meeting attendance, response times, or documentation to avoid burnout and stay on track.'}
+            </div>
+            </div>
+        )
         },
-
         {
-            title: "Work Distribution",
-            content: (
-                <div className="space-y-2">
-                <div className="text-sm text-gray-700">Vamsi Bramhdadevi (Integration)</div>
-                <div className="w-full bg-gray-200 h-3 rounded">
-                    <div className="bg-blue-500 h-3 rounded" style={{ width: "45%" }}></div>
-                </div>
-                <div className="text-sm text-gray-700">Devayani (Frontend)</div>
-                <div className="w-full bg-gray-200 h-3 rounded">
-                    <div className="bg-purple-500 h-3 rounded" style={{ width: "35%" }}></div>
-                </div>
-                <div className="text-sm text-gray-700">Sri Ram (Backend)</div>
-                <div className="w-full bg-gray-200 h-3 rounded">
-                    <div className="bg-green-500 h-3 rounded" style={{ width: "30%" }}></div>
-                </div>
-                </div>
-            )
+          title: "Work Distribution",
+          content: (
+            <div className="space-y-2">
+              <div className="text-sm text-gray-700">Vamsi Bramhadevi (Rerum Integration)</div>
+              <div className="w-full bg-gray-200 h-3 rounded">
+                <div className="bg-blue-500 h-3 rounded" style={{ width: "45%" }}></div>
+              </div>
+              <div className="text-sm text-gray-700">Devayani Konakalla (Frontend)</div>
+              <div className="w-full bg-gray-200 h-3 rounded">
+                <div className="bg-purple-500 h-3 rounded" style={{ width: "35%" }}></div>
+              </div>
+              <div className="text-sm text-gray-700">Sri Ram Duvvuri (Backend)</div>
+              <div className="w-full bg-gray-200 h-3 rounded">
+                <div className="bg-green-500 h-3 rounded" style={{ width: "30%" }}></div>
+              </div>
+            </div>
+          )
         },
-
+        {
+          title: "Team Metrics",
+          content: (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Meeting Attendance</span>
+                <span className="text-xl font-bold text-blue-600">{teamMetrics.meetingAttendance}%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Avg. Response Time</span>
+                <span className="text-xl font-bold text-blue-600">{teamMetrics.responseTime} min</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Documentation Quality</span>
+                <span className="text-xl font-bold text-blue-600">{teamMetrics.documentationQuality}%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Sprint Planning Adherence</span>
+                <span className="text-xl font-bold text-blue-600">{teamMetrics.sprintPlanningAdherence}%</span>
+              </div>
+            </div>
+          )
+        },
+        {
+          title: "Product Metrics",
+          content: (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Post-Deployment Bugs</span>
+                <span className="text-xl font-bold text-red-600">{productMetrics.bugCount}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Peer Feedback Score</span>
+                <span className="text-xl font-bold text-green-600">{productMetrics.feedbackScore}/100</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Task Completion Rate</span>
+                <span className="text-xl font-bold text-blue-600">{productMetrics.taskCompletionRate}%</span>
+              </div>
+            </div>
+          )
+        },
         {
           title: "Innovation Hub",
           content: (
@@ -804,8 +875,6 @@
             </div>
           )
         },
-
-
       ];
 
       return (
